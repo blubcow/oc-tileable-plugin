@@ -11,6 +11,8 @@ This plugin is based on the backend `List` widget `Backend\Widgets\Lists`
 and the backend `ListController` behaviour `Backend\Behaviors\ListController`.
 
 
+***
+
 ## List Widget
 - Display a tiled list straight out of your controller
 - Replaces "`Backend\Behaviors\ListController`"  
@@ -120,6 +122,7 @@ columns:
         invisible: false
 ```
 
+***
 
 ## Form Widget 
 - Display a relation field as a tiled list
