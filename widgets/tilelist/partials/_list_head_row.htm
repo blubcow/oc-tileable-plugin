@@ -1,0 +1,164 @@
+<div class="list-head"><!-- had class="table data" -->
+    <!-- Search widget -->
+    <?php if($showSearch): ?>
+        <div class="container-right">
+            <?= $searchWidget ?>
+        </div>
+    <?php endif ?>
+    
+    
+    <!-- Setup - opens a popup with configuration options -->
+    <?php if ($showSetup): ?>
+        <div class="container-left">
+        <a href="javascript:;"
+            class="btn btn-sm btn-primary"
+            title="List setup"
+            data-control="popup"
+            data-handler="<?= $this->getEventHandler('onLoadSetup') ?>">
+            <span class="icon icon-sliders"></span>
+        </a>
+       </div>
+    <?php endif ?>
+    
+    
+    <!-- Checkbox to rule them all -->
+    <!--<?php /* ?>
+    <?php if ($showCheckboxes): ?>
+        <th class="list-checkbox">
+            <div class="checkbox custom-checkbox nolabel">
+                <input type="checkbox" id="<?= $this->getId('checkboxAll') ?>" />
+                <label for="<?= $this->getId('checkboxAll') ?>"></label>
+            </div>
+        </th>
+    <?php endif ?>
+    <?php */ ?>-->
+    
+    
+    <!-- View buttons - change list view -->
+    <?php if ($showViews): ?>
+        <div class="btn-group btn-group-sm container-left">
+            <?php if (in_array('lg', $views)): ?>
+                <a data-request="<?= $this->getEventHandler('onView') ?>"
+                    data-request-data="view: 'lg', page: <?= $pageCurrent ?>"
+                    class="btn btn-default <?= ($activeView == 'lg') ? 'active' : '' ?>">
+                    <span class="icon icon-th-large"></span>
+                </a>
+            <?php endif ?>
+            <?php if (in_array('md', $views)): ?>
+                <a
+                    data-request="<?= $this->getEventHandler('onView') ?>"
+                    data-request-data="view: 'md', page: <?= $pageCurrent ?>"
+                    class="btn btn-default <?= ($activeView == 'md') ? 'active' : '' ?>">
+                    <span class="icon icon-th"></span>
+                </a>
+            <?php endif ?>
+            <?php if (in_array('sm', $views)): ?>
+                <a data-request="<?= $this->getEventHandler('onView') ?>"
+                    data-request-data="view: 'sm', page: <?= $pageCurrent ?>"
+                    class="btn btn-default <?= ($activeView == 'sm') ? 'active' : '' ?>">
+                    <span class="icon icon-th-list"></span>
+                </a>
+            <?php endif ?>
+            <?php if (in_array('xs', $views)): ?>
+                <a data-request="<?= $this->getEventHandler('onView') ?>"
+                    data-request-data="view: 'xs', page: <?= $pageCurrent ?>"
+                    class="btn btn-default <?= ($activeView == 'xs') ? 'active' : '' ?>">
+                    <span class="icon icon-list"></span>
+                </a>
+            <?php endif ?>
+        </div>
+    <?php endif ?>
+    
+    
+    <!-- Show / Hide Active / Inactive Models.
+    ---- Only for relations -->
+    <!--<?php /* ?>
+    <?php if ($isRelation): ?>
+        <div class="btn-group btn-group-sm">
+            <a href="javascript:;" class="btn btn-default active">
+                <span class="icon icon-check-square-o"></span>
+            </a>
+            <a href="javascript:;" class="btn btn-default active">
+                <span class="icon icon-square-o"></span>
+            </a>
+        </div>
+    <?php endif ?>
+    <?php */ ?>-->
+    
+    
+    <!-- Sort by selectbox - select column to sort -->
+    <?php if ($showSorting): ?>
+        <div class="container-left">
+        <select
+            name="<?= $this->getFieldName('sortColumn') ?>"
+            class="form-control input-sm custom-select"
+            style="width: 150px"
+            
+            data-request="<?= $this->getEventHandler('onSort') ?>"
+            data-stripe-load-indicator
+            >
+            
+            <?php foreach ($allColumns as $key => $column): ?>
+                <?php if ($showSorting && $column->sortable): ?>
+                    <option 
+                        <?= $sortColumn == $column->columnName ? 'selected="selected"' : '' ?>
+                        value="<?= $column->columnName ?>">
+                        <?= $this->getHeaderValue($column) ?>
+                    </option>
+                <?php endif ?>
+            <?php endforeach ?>
+        </select>
+       </div>
+    <?php endif ?>
+    
+    
+    <!-- Sort direction buttons - ASC or DESC -->
+    <?php if ($showSorting): ?>
+        <div class="container-left">
+        <a href="javascript:;"
+            class="btn btn-sm btn-default"
+            
+            data-request="<?= $this->getEventHandler('onSortDirection') ?>"
+            data-stripe-load-indicator
+            data-request-data="page: <?= $pageCurrent ?>">
+            <?php if($sortDirection == 'asc'): ?>
+                <span class="icon icon-sort-alpha-asc"></span>
+            <?php else: ?>
+                <span class="icon icon-sort-alpha-desc"></span>
+            <?php endif ?>
+        </a>
+        </div>
+    <?php endif ?>
+    
+    
+    <!-- Batch Uploader -->
+    <?php if ($showUpload): ?>
+        
+        <div class="container-left">
+            
+            <!--
+            <button type="button" 
+                class="btn btn-primary oc-icon-upload" 
+                data-control="upload" 
+                data-url="<?= Backend::url('sewa/artnetwork/artworks/onBatchUploadCreate') ?>">
+                <?= e(trans('sewa.artnetwork::lang.artworks.upload_create')) ?>
+            </button>
+           -->
+           
+            <a href="javascript:;"
+                class="btn btn-sm btn-default"
+                data-control="upload"
+                data-url="<?= Request::url('onUpload') ?>"
+                data-handler="<?= $this->getEventHandler('onUpload') ?>">
+                <span class="icon icon-upload"></span> Upload &amp; Create
+            </a>
+            
+        </div>
+    <?php endif ?>
+    
+    
+    <!-- Custom toolbar partial -->
+    <?php if($headerPartial): ?>
+        <?= $headerPartial ?>
+    <?php endif ?>
+</div>

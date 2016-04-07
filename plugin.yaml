@@ -1,0 +1,6 @@
+plugin:
+    name: 'sewa.tileable::lang.plugin.name'
+    description: 'sewa.tileable::lang.plugin.description'
+    author: sewa
+    icon: oc-icon-th
+    homepage: ''

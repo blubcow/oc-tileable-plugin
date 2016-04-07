@@ -1,0 +1,18 @@
+<!-- Dropdown -->
+<select
+    id=""
+    name="<?= $this->getFieldName($key) ?>[<?= $id ?>][]"
+    class="form-control custom-select"
+    data-request="<?= $this->getEventHandler('onRelatedChanged') ?>"
+    data-request-data="<?= $this->alias ?>:{
+        'related_model': '<?= $id ?>',
+        'related_field': '<?= $key ?>'
+    }"
+    multiple="multiple"
+    data-request-complete="$(this).trigger('unchange.oc.changeMonitor')">
+    <?php foreach ($all as $k => $v): ?>
+        <option <?php if(in_array($v, explode(',', $active))){ echo 'selected="selected"'; } ?> value="<?= $k ?>">
+            <?= $v ?>
+        </option>
+    <?php endforeach ?>
+</select>

@@ -1,0 +1,109 @@
+<?php
+    if ($showTree) {
+        $expanded = $this->isTreeNodeExpanded($record);
+        $childRecords = $record->getChildren();
+    }
+?>
+
+<!-- List View -->
+<div class="item <?php if(in_array($record->id, $activeRecords)): ?>active<?php endif ?> list-tree-level-<?= $treeLevel ?> <?= $this->getRowClass($record) ?>">
+    
+    <div class="wrapper" onclick="<?= $this->getRecordOnClick($record) ?>">
+        
+        <!-- preview thumbnail -->
+        <?php if ($showPreview): ?>
+            <div class="preview"
+                 style="background-image: url('<?= $this->getRecordPreview($record) ?>')"
+                 data-click-target="<?= $isRelation ? 'checkbox' : $this->getRecordUrl($record) ?>"
+                 ></div>
+        <?php endif ?>
+        
+        
+        <!-- checkbox -->
+        <?php if ($showCheckboxes || $isRelation): ?>
+            <div class="main-checkbox checkbox custom-checkbox nolabel">
+                <input
+                    type="checkbox"
+                    id="<?= $this->getId('checkbox-' . $record->getKey()) ?>"
+                    name="<?= $checkboxName ?>[]"
+                    value="<?= $record->getKey() ?>"
+                    
+                    data-request="<?= $this->getEventHandler('onRelationChanged') ?>"
+                    data-request-before-update="$(this).trigger('unchange.oc.changeMonitor');"
+                    
+                    <?php $isActive = in_array($record->id, $activeRecords); ?>
+                    
+                    <?php if($isActive): ?>
+                        checked="checked"
+                    <?php endif ?>
+                    
+                    data-request-data="<?= $this->alias ?>:{
+                        'relation_model': '<?= $record->id ?>',
+                        'relation_value': '<?= $isActive ? "false" : "true" ; ?>'
+                    }"/>
+                <label for="<?= $this->getId('checkbox-' . $record->getKey()) ?>">Check</label>
+            </div>
+        <?php endif ?>
+        
+        
+        <div class="right-column" data-click-overlay>
+            <!-- edit link -->
+            <?php if ($this->getRecordUrl($record) && $isRelation): ?>
+                <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary">edit <span class="icon icon-edit"></span></a>
+            <?php endif ?>
+            
+            <!-- edit link -->
+            <?php if ($showDelete): ?>
+                <a href="javascript:;"
+                    data-delete-record="<?= $record->id ?>"
+                    class="delete-button btn btn-xs btn-danger"
+                    data-request-handler="<?= $this->getEventHandler('onDeleteRecord') ?>">
+                    
+                    delete <span class="icon icon-remove"></span>
+                </a>
+            <?php endif ?>
+        </div>
+        
+        
+        <!-- tree -->
+        <!--
+        <?php if ($showTree): ?>
+            <?= $this->makePartial('list_body_tree', [
+                'record' => $record,
+                'expanded' => $expanded,
+                'childCount' => $record->getChildCount()
+            ]) ?>
+        <?php endif ?>
+        -->
+        
+        
+        <!-- setup button ??? TODO: find out if this is draggable -->
+        <!--
+        <?php if ($showSetup): ?>
+            <div class="list-setup">&nbsp;</div>
+        <?php endif ?>
+        -->
+        
+        
+        <!-- description rows -->
+        <div class="description">
+            <?php $index = $url = 0; foreach ($columns as $key => $column): ?>
+                <?php $index++; ?>
+                <?php if($column->relation): ?>
+                    <?= $this->makePartial($columnTypes[$key], ['id'=>$record->id, 'key'=>$key, 'all'=>$columnValues[$key], 'active'=>$record->{$key}]); ?>
+                <?php else: ?>
+                    <div data-title="<?= e(trans($column->label)) ?>"
+                        class="list-cell list-cell-index-<?= $index ?> list-cell-name-<?= $column->getName() ?> list-cell-type-<?= $column->type ?> 'nolink' <?= $column->cssClass ?>"
+                        data-click-target="<?= $isRelation ? 'checkbox' : $this->getRecordUrl($record) ?>">
+                        <b><?= $columns[$key]->getName(); ?>: </b>
+                        <?= $this->getColumnValue($record, $column) ?>
+                    </div>
+                <?php endif ?>
+            <?php endforeach?>
+        </div>
+    </div>
+</div>
+
+<?php if ($showTree && $expanded): ?>
+    <?= $this->makePartial('list_body_rows', ['records' => $childRecords, 'treeLevel' => $treeLevel+1]) ?>
+<?php endif ?>

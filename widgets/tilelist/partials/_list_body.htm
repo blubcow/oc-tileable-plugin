@@ -1,0 +1,47 @@
+<div class=""><!-- had class="table data" -->
+    
+    <div>
+        <?php if (count($records)): ?>
+            <div class="no-data">
+                <div colspan="<?= $columnTotal ?>" class="">
+                   <?= $this->makePartial('list_body_rows') ?>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="no-data">
+                <div colspan="<?= $columnTotal ?>" class="list-pagination nolink">
+                    <p class="no-data"><?= $noRecordsMessage ?></p>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+    <div class="list-footer">
+        <?php if ($showPagination): ?>
+            <div>
+                <div colspan="<?= $columnTotal ?>" class="list-pagination nolink">
+                    <?= $this->makePartial('list_pagination') ?>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+
+<!--<?php /* ?>
+<div>
+    <?php if (count($records)): ?>
+        <div class="no-data">
+            <?= $this->makePartial('list_body_rows') ?>
+        </div>
+    <?php else: ?>
+        <div class="no-data list-pagination nolink">
+            <p class="no-data"><?= $noRecordsMessage ?></p>
+        </div>
+    <?php endif ?>
+    
+    <?php if ($showPagination): ?>
+        <div class="list-pagination nolink">
+            <?= $this->makePartial('list_pagination') ?>
+        </div>
+    <?php endif ?>
+</table>
+<?php */ ?>-->
