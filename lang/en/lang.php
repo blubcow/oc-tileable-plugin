@@ -1,6 +1,6 @@
 <?php return [
     'plugin' => [
-        'name' => 'tileable',
+        'name' => 'Tileable',
         'description' => 'Display Lists and Form Relations as Tiles'
     ]
 ];
