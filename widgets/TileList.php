@@ -524,7 +524,6 @@ class TileList extends Lists
             }else
             if (in_array($type, ['belongsToMany', 'morphToMany', 'morphedByMany'])){
                 if($add){
-                    dump($record->{$fieldName}());
                     $record->{$fieldName}()->detach();
                     $record->{$fieldName}()->attach($relatedData);
                 }else{
@@ -584,7 +583,11 @@ class TileList extends Lists
                 
                 // FILL MODEL ATTRIBUTES WITH FILE ATTRIBUTES
                 foreach($this->uploadFill as $fillK => $fillV){
-                    $model->{$fillK} = $file->{$fillV};
+                    if($file->{$fillV}){
+                        $model->{$fillK} = $file->{$fillV};
+                    }else{
+                        $model->{$fillK} = $fillV;
+                    }
                 }
                 
                 // --------------------------
