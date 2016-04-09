@@ -6,6 +6,6 @@
             id="<?= $this->getId('checkbox-' . $record->getKey()) ?>"
             value="<?= $record->getKey() ?>"
             <?php if(in_array($record->id, $activeRecords)): ?>checked="checked"<?php endif ?>/>
-        <label for="<?= $this->getId('checkbox-' . $record->getKey()) ?>">Check</label>
+        <label for="<?= $this->getId('checkbox-' . $record->getKey()) ?>"><?= e(trans('sewa.tileable::lang.list.check')) ?></label>
     </div>
 </div>

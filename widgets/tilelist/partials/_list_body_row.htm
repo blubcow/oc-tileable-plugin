@@ -41,7 +41,7 @@
                         'relation_model': '<?= $record->id ?>',
                         'relation_value': '<?= $isActive ? "false" : "true" ; ?>'
                     }"/>
-                <label for="<?= $this->getId('checkbox-' . $record->getKey()) ?>">Check</label>
+                <label for="<?= $this->getId('checkbox-' . $record->getKey()) ?>"><?= e(trans('sewa.tileable::lang.list.check')) ?></label>
             </div>
         <?php endif ?>
         
@@ -49,7 +49,7 @@
         <div class="right-column" data-click-overlay>
             <!-- edit link -->
             <?php if ($this->getRecordUrl($record) && $isRelation): ?>
-                <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary">edit <span class="icon icon-edit"></span></a>
+                <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary"><?= e(trans('sewa.tileable::lang.list.edit')) ?> <span class="icon icon-edit"></span></a>
             <?php endif ?>
             
             <!-- edit link -->
@@ -59,7 +59,7 @@
                     class="delete-button btn btn-xs btn-danger"
                     data-request-handler="<?= $this->getEventHandler('onDeleteRecord') ?>">
                     
-                    delete <span class="icon icon-remove"></span>
+                    <?= e(trans('sewa.tileable::lang.list.delete')) ?> <span class="icon icon-remove"></span>
                 </a>
             <?php endif ?>
         </div>
