@@ -1,5 +1,5 @@
 
-# Tileable List Widgets for October CMS  
+# Tileable List Widgets for OctoberCMS
 - [Content](#content)
 - [List Widget (TileList)](#list-widget)
 - [Form Widget (TileRelation)](#form-widget)
@@ -104,7 +104,8 @@ headerPartial: false
 - It represents the columns (fields) displayed by our list
 
 ```
-columns:    
+columns:
+
     name:
         label: Name
         searchable: true
@@ -167,6 +168,7 @@ class MyController extends Controller
 ```
 name: MyModel Update Form
 form: ~/plugins/vendor/plugin/controllers/mycontroller/form_fields.yaml
+
 modelClass: Vendor\Plugin\Models\MyModel
 defaultRedirect: vendor/plugin/mymodel
 
@@ -195,6 +197,7 @@ fields:
         span: right
 
 tabs:
+
     stretch: true
     fields:
         attachment_files:
@@ -214,7 +217,7 @@ tabs:
                 # Model List Column configuration
                 # FOR MORE INFORMATION:
                 # Read "List Widget - 3) Edit list_fields.yaml"
-                list: ~/plugins/vendor/plugin/controllers/mycontroller/list_fields.yaml.yaml
+                list: ~/plugins/vendor/plugin/controllers/mycontroller/list_fields.yaml
                 
                 # Link URL for each record
                 recordUrl: vendor/plugin/mymodel/update/:id
