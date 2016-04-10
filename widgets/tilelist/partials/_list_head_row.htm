@@ -150,7 +150,7 @@
                 data-control="upload"
                 data-url="<?= Request::url('onUpload') ?>"
                 data-handler="<?= $this->getEventHandler('onUpload') ?>">
-                <span class="icon icon-upload"></span> Upload &amp; Create
+                <span class="icon icon-upload"></span> <?= e(trans('sewa.tileable::lang.list.upload')) ?>
             </a>
             
         </div>
