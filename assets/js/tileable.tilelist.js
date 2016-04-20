@@ -182,7 +182,8 @@
     };
     
     ListWidget.prototype.onUploadQueueComplete = function() {
-        location.reload(true);
+        alert('upload complete. please reload site');
+        //location.reload(true);
     };
     
     
