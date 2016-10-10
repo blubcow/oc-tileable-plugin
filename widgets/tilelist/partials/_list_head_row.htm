@@ -11,7 +11,7 @@
     <?php if ($showSetup): ?>
         <div class="container-left">
         <a href="javascript:;"
-            class="btn btn-sm btn-primary"
+            class="btn btn-sm btn-default"
             title="List setup"
             data-control="popup"
             data-handler="<?= $this->getEventHandler('onLoadSetup') ?>">
@@ -36,11 +36,11 @@
     
     <!-- View buttons - change list view -->
     <?php if ($showViews): ?>
-        <div class="btn-group btn-group-sm container-left">
+        <div class="btn-group container-left">
             <?php if (in_array('lg', $views)): ?>
                 <a data-request="<?= $this->getEventHandler('onView') ?>"
                     data-request-data="view: 'lg', page: <?= $pageCurrent ?>"
-                    class="btn btn-default <?= ($activeView == 'lg') ? 'active' : '' ?>">
+                    class="btn btn-default btn-sm <?= ($activeView == 'lg') ? 'active' : '' ?>">
                     <span class="icon icon-th-large"></span>
                 </a>
             <?php endif ?>
@@ -48,21 +48,21 @@
                 <a
                     data-request="<?= $this->getEventHandler('onView') ?>"
                     data-request-data="view: 'md', page: <?= $pageCurrent ?>"
-                    class="btn btn-default <?= ($activeView == 'md') ? 'active' : '' ?>">
+                    class="btn btn-default btn-sm <?= ($activeView == 'md') ? 'active' : '' ?>">
                     <span class="icon icon-th"></span>
                 </a>
             <?php endif ?>
             <?php if (in_array('sm', $views)): ?>
                 <a data-request="<?= $this->getEventHandler('onView') ?>"
                     data-request-data="view: 'sm', page: <?= $pageCurrent ?>"
-                    class="btn btn-default <?= ($activeView == 'sm') ? 'active' : '' ?>">
+                    class="btn btn-default btn-sm <?= ($activeView == 'sm') ? 'active' : '' ?>">
                     <span class="icon icon-th-list"></span>
                 </a>
             <?php endif ?>
             <?php if (in_array('xs', $views)): ?>
                 <a data-request="<?= $this->getEventHandler('onView') ?>"
                     data-request-data="view: 'xs', page: <?= $pageCurrent ?>"
-                    class="btn btn-default <?= ($activeView == 'xs') ? 'active' : '' ?>">
+                    class="btn btn-default btn-sm <?= ($activeView == 'xs') ? 'active' : '' ?>">
                     <span class="icon icon-list"></span>
                 </a>
             <?php endif ?>

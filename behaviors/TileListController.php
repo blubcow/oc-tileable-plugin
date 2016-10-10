@@ -40,8 +40,10 @@ class TileListController extends ListController
         /*
          * Create the model
          */
+        // get class from yaml config file
         $class = $listConfig->modelClass;
         $model = new $class();
+        // make it extendable
         $model = $this->controller->listExtendModel($model, $definition);
 
         /*

@@ -167,8 +167,12 @@ class TileRelation extends FormWidgetBase
      */
     protected function getRelationObject()
     {
+        // TODO: why did we need this before?
+        // After an update, those function "resolveModelAttribute" went to Backend\Classes\FormField
+        // Also, check how we can push back an system update
+        /*
         list($model, $attribute) = $this->resolveModelAttribute($this->valueFrom);
-                
+        
         if (!$model->hasRelation($attribute)) {
             throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
                 'class' => get_class($model),
@@ -177,6 +181,18 @@ class TileRelation extends FormWidgetBase
         }
         
         return $model->{$attribute}();
+        */
+        
+        // check if this widget in fact represents an relation
+        if (!$this->model->hasRelation($this->valueFrom)) {
+            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+                'class' => get_class($this->model),
+                'relation' => $this->valueFrom
+            ]));
+        }
+        
+        //
+        return $this->model->{$this->valueFrom}();
     }
     
     /**

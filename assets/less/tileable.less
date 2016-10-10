@@ -3,7 +3,12 @@
  */
 @october-storm-path: "../../../../../modules/system/assets/ui/";
 
-@import "@{october-storm-path}less/global.less";
+@import (reference) "@{october-storm-path}storm.less";
+
+//@import (reference) "@{october-storm-path}less/global.less";
+//@import "@{october-storm-path}less/global.variables.less";
+//@import "@{october-storm-path}less/site.variables.less";
+
 //@import "@{october-storm-path}less/site.less";
 
 .grayscale(@value: 1) {
@@ -27,7 +32,7 @@
       //#############################################################################
       input.form-control[type=text] {
           height: auto;
-          padding: 4px 10px 5px 10px;
+          padding: 3px 10px 4px 10px;
           background-position: right -87px;
       }
       .select2-container--default{
@@ -36,7 +41,7 @@
             
             .select2-selection--single{
               height: auto;
-              padding: 4px 23px 5px 11px;
+              padding: 3px 23px 4px 11px;
             }
       }
       .loading-indicator-container{

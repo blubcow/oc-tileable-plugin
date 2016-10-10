@@ -1,6 +1,6 @@
 plugin:
     name: 'sewa.tileable::lang.plugin.name'
     description: 'sewa.tileable::lang.plugin.description'
-    author: sewa
+    author: Sewa Golubkow
     icon: oc-icon-th
     homepage: 'https://github.com/sewagolubkow/oc-tileable-plugin'
