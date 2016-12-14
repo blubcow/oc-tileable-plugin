@@ -1,4 +1,3 @@
-
 # Tileable List Widgets for OctoberCMS
 - [Content](#content)
 - [List Widget (TileList)](#list-widget)

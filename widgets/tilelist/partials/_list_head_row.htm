@@ -7,11 +7,21 @@
     <?php endif ?>
     
     
+    <?php if ($createRecordUrl): ?>
+       <div class="container-left">
+        <a href="<?= Backend::url($createRecordUrl) ?>"
+            class="btn btn-sm btn-primary oc-icon-plus">
+            Create New
+        </a>
+       </div>
+    <?php endif ?>
+    
+    
     <!-- Setup - opens a popup with configuration options -->
     <?php if ($showSetup): ?>
         <div class="container-left">
         <a href="javascript:;"
-            class="btn btn-sm btn-default"
+            class="btn btn-sm btn-primary"
             title="List setup"
             data-control="popup"
             data-handler="<?= $this->getEventHandler('onLoadSetup') ?>">

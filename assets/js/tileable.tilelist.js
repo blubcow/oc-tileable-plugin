@@ -6,7 +6,7 @@
  */
 +function ($) { "use strict";
 
-    var ListWidget = function (element, options) {
+    var TileListWidget = function (element, options) {
 
         var $el = this.$el = $(element);
 
@@ -17,10 +17,10 @@
         this.initUploader();
     };
 
-    ListWidget.DEFAULTS = {
+    TileListWidget.DEFAULTS = {
     };
     
-    ListWidget.prototype.init = function()
+    TileListWidget.prototype.init = function()
     {
         /*
         this.$el.closest('form').bind('ajaxSuccess', function(context, data, textStatus, jqXHR){
@@ -39,10 +39,10 @@
         //ajaxUpdateComplete
         
         /*
-        this.$el.find('[data-control="listwidget"]')
+        this.$el.find('[data-control="tilelistwidget"]')
         
         
-        .closest('[data-control="listwidget"]')
+        .closest('[data-control="tilelistwidget"]')
         
         $(this).trigger('unchange.oc.changeMonitor');
         */
@@ -63,8 +63,10 @@
         
          //------------------------------------------------------------------------
 
-        
-        list.on('change', 'input[type="checkbox"]', function(){
+        /**
+         * CHECKBOX 
+         */
+        this.$el.on('change', 'input[type="checkbox"]', function(){
             var $el = $(this),
                 checked = $el.is(':checked');
             
@@ -85,9 +87,9 @@
         
         
         /**
-         * delete record completely 
+         * DELETE record completely 
          */
-        list.on('click', '*[data-delete-record]', function()
+        this.$el.on('click', '*[data-delete-record]', function()
         {
             var x = window.confirm('You want to delete this record completely?');
             if(x){
@@ -102,10 +104,8 @@
             }
         });
         
-        /**
-         * prevent bubbling up on overlays 
-         */
-        list.on('click', '*[data-click-overlay]', function(e)
+        // style - prevent bubbling up on overlays 
+        this.$el.on('click', '*[data-click-overlay]', function(e)
         {
             e.stopPropagation();
         });
@@ -113,7 +113,7 @@
         /**
          * click action - main action on item click 
          */
-        list.on('click', '*[data-click-target]', function(e)
+        this.$el.on('click', '*[data-click-target]', function(e)
         {
             var $link = $(e.currentTarget);
             var target = $link.data('click-target');
@@ -144,9 +144,13 @@
                 }
             }
         });*/
+        
+        if (this.options.isSortable) {
+            this.bindSortable()
+        }
     };
     
-    ListWidget.prototype.initUploader = function()
+    TileListWidget.prototype.initUploader = function()
     {
         var $btn = this.$el.find('[data-control="upload"]').eq(0);
             
@@ -181,14 +185,113 @@
             
     };
     
-    ListWidget.prototype.onUploadQueueComplete = function() {
+    TileListWidget.prototype.onUploadQueueComplete = function() {
         alert('upload complete. please reload site');
         //location.reload(true);
     };
     
     
     
-    ListWidget.prototype.update = function()
+    
+    //
+    // update
+    TileListWidget.prototype.updateBody = function()
+    {
+        this.bindSortable();
+    }
+    
+    
+    
+    
+    //
+    // Sorting
+    //
+
+    TileListWidget.prototype.bindSortable = function() {
+        
+        
+        var _self = this;
+        Sortable.create(this.$el.find('.tileable-list').get( 0 ), {
+            onUpdate: function (evt/**Event*/){
+                 //var item = evt.item; // the current dragged HTMLElement
+                 _self.onSortRecords(_self);
+            }
+        });
+        
+        
+        
+        /*
+        var placeholderEl = $('<div class="item active placeholder"><div class="wrapper">adfasdf</div></div>');
+        var _self = this;
+        
+        this.$el.find('.tileable-list').sortable({
+            itemSelector: 'div.item',
+            containerSelector: '.tileable-list',
+            nested: false,
+            tolerance: 50,
+            placeholder: placeholderEl,
+            handle: '.sort-button',
+            forcePlaceholderSize: true,
+            onDrop: function ($item, container, _super, event){
+                //console.log($item);
+                //console.log(container);
+                //console.log(_super);
+                //_self.onSortRecords(_self);
+                
+                _super($item, container);
+                
+                _self.onSortRecords(_self);
+            },
+            distance: 10
+        })
+        */
+    }
+
+    TileListWidget.prototype.onSortRecords = function(_s) {
+        var _self = _s;
+        //console.log(_self.options);
+        if (_self.options.sortHandler) {
+
+            /*
+             * Build an object of ID:ORDER
+             */
+            var orderData = {}
+            
+            var index = _self.$el.first('.item').attr('id');
+            _self.$el.find('.item')
+                .each(function(index){
+                    var id = $(this).attr('id')
+                    orderData[id] = index + 1
+                });
+            
+            
+            //console.log(_self.$el.find('.item'));
+            
+            /*
+            _self.$el.on('ajaxUpdate', function() {
+                console.log('Updated!');
+            });
+            */
+            
+            
+            _self.$el.request(this.options.sortHandler, {
+                data: { sortOrder: orderData },
+                complete: function(){
+                    _self.updateBody();
+                }
+            })
+        }
+    }
+    
+    
+    
+    
+    //
+    //
+    //
+    
+    
+    TileListWidget.prototype.update = function()
     {
         // remove uploader
         if (this.dropzone){
@@ -199,12 +302,7 @@
         this.initUploader();
     };
     
-    
-    
-    
-    
-
-    ListWidget.prototype.getChecked = function() {
+    TileListWidget.prototype.getChecked = function() {
         var
             list = this.$el,
             body = $('tbody', list)
@@ -216,7 +314,7 @@
         }).get();
     }
 
-    ListWidget.prototype.toggleChecked = function(el) {
+    TileListWidget.prototype.toggleChecked = function(el) {
         var $checkbox = $('.list-checkbox input[type="checkbox"]', $(el).closest('tr'))
         $checkbox.prop('checked', !$checkbox.is(':checked')).trigger('change')
     }
@@ -224,16 +322,16 @@
     // LIST WIDGET PLUGIN DEFINITION
     // ============================
 
-    var old = $.fn.listWidget
+    var old = $.fn.tileListWidget
 
-    $.fn.listWidget = function (option) {
+    $.fn.tileListWidget = function (option) {
         var args = Array.prototype.slice.call(arguments, 1), result
 
         this.each(function () {
             var $this   = $(this)
-            var data    = $this.data('oc.listwidget')
-            var options = $.extend({}, ListWidget.DEFAULTS, $this.data(), typeof option == 'object' && option)
-            if (!data) $this.data('oc.listwidget', (data = new ListWidget(this, options)))
+            var data    = $this.data('oc.tilelistwidget')
+            var options = $.extend({}, TileListWidget.DEFAULTS, $this.data(), typeof option == 'object' && option)
+            if (!data) $this.data('oc.tilelistwidget', (data = new TileListWidget(this, options)))
             if (typeof option == 'string') result = data[option].apply(data, args)
             if (typeof result != 'undefined') return false
         })
@@ -241,13 +339,13 @@
         return result ? result : this
       }
 
-    $.fn.listWidget.Constructor = ListWidget
+    $.fn.tileListWidget.Constructor = TileListWidget
 
     // LIST WIDGET NO CONFLICT
     // =================
 
-    $.fn.listWidget.noConflict = function () {
-        $.fn.listWidget = old
+    $.fn.tileListWidget.noConflict = function () {
+        $.fn.tileListWidget = old
         return this
     }
 
@@ -259,21 +357,28 @@
 
     $.oc.listToggleChecked = function(el) {
         $(el)
-            .closest('[data-control="listwidget"]')
-            .listWidget('toggleChecked', el)
+            .closest('[data-control="tilelistwidget"]')
+            .tileListWidget('toggleChecked', el)
     }
 
     $.oc.listGetChecked = function(el) {
         return $(el)
-            .closest('[data-control="listwidget"]')
-            .listWidget('getChecked')
+            .closest('[data-control="tilelistwidget"]')
+            .tileListWidget('getChecked')
     }
 
     // LIST WIDGET DATA-API
     // ==============
 
     $(document).render(function(){
-        $('[data-control="tilelistwidget"]').listWidget();
-    })
-
+        $('[data-control="tilelistwidget"]').tileListWidget();
+    });
+    
 }(window.jQuery);
+
+function updateTileListWidget(id)
+{
+    console.log(id);
+    console.log($('#'+id));
+    $('#'+id).tileListWidget('updateBody');
+}

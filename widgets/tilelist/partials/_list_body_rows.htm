@@ -1,9 +1,8 @@
 <div class="tileable-list view-<?= $activeView ?>">
+    <!-- Artwork Model -->
     <?php foreach ($records as $record): ?>
-        
-    <div class="record" id="<?= $record->id ?>">
-        <?= $this->makePartial('list_body_row', ['record' => $record, 'treeLevel' => $treeLevel]) ?>
-    </div>
+       
+       <?= $this->makePartial('list_body_row', ['record' => $record, 'treeLevel' => $treeLevel]) ?>
     
     <?php endforeach ?>
 </div>

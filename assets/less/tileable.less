@@ -19,6 +19,64 @@
   filter: grayscale(@value);
 }
 
+
+
+
+
+/*
+ * ############################################################ SORTABLE -- MOVE IT!!!!
+ */
+
+/*
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+
+
+
+.dragging{
+  position: relative;
+}
+.dragged {
+  width: 0px !important;
+  height: 0px !important;
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+  display: none;
+}
+.dragged {
+  .wrapper{
+  }
+}
+*/
+
+
+.tileable-list .item {
+  position: relative !important;
+  /** More li styles **/
+}
+.tileable-list .item:before {
+  position: absolute !important;
+  /** Define arrowhead **/
+}
+.tileable-list .item.placeholder .wrapper{
+  height: 150px !important;
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .tileable{
     .select2-hidden-accessible{
         height:1px!important;
@@ -216,19 +274,19 @@
           right: floor(@grid-gutter-width/4);
           
           .btn{
-            float: right;
-            display: block;
-            margin-bottom: 2px;
-            clear: both;
+                float: right;
+                display: block;
+                margin-bottom: 2px;
+                clear: both;
           }
           
           // buttons with icon on the right side FIX
           .btn-xs{
-            padding: 1px 3px 1px 7px;
-            .icon{
-              width: 13px;
-              display: inline-block;
-            }
+                //padding: 1px 3px 1px 7px;
+                .icon{
+                      width: 13px;
+                      display: inline-block;
+                }
           }
         }
         

@@ -79,7 +79,8 @@ class TileListController extends ListController
             'showDelete',
             'headerPartial',
             'relation',
-            'checkboxName'
+            'checkboxName',
+            'createRecordUrl'
         ];
 
         foreach ($configFieldsToTransfer as $field) {

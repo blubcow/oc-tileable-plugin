@@ -6,7 +6,9 @@
 ?>
 
 <!-- List View -->
-<div class="item <?php if(in_array($record->id, $activeRecords)): ?>active<?php endif ?> list-tree-level-<?= $treeLevel ?> <?= $this->getRowClass($record) ?>">
+<div class="item <?php if(in_array($record->id, $activeRecords)): ?>active<?php endif ?> list-tree-level-<?= $treeLevel ?> <?= $this->getRowClass($record) ?>"
+     id="<?= $record->id ?>"
+     data-custom-sort="<?php if ($sortable): ?><?= $record->{$sortColumn} ?><?php endif ?>">
     
     <div class="wrapper" onclick="<?= $this->getRecordOnClick($record) ?>">
         
@@ -47,6 +49,13 @@
         
         
         <div class="right-column" data-click-overlay>
+            <!-- sort button -->
+            <?php if ($sortable): ?>
+                <a href="javascript:;" data-sort class="sort-button btn btn-xs btn-primary">
+                    <span class="icon icon-arrows"></i>
+                </a>
+            <?php endif ?>
+            
             <!-- edit link -->
             <?php if ($this->getRecordUrl($record) && $isRelation): ?>
                 <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary"><?= e(trans('sewa.tileable::lang.list.edit')) ?> <span class="icon icon-edit"></span></a>
@@ -63,7 +72,6 @@
                 </a>
             <?php endif ?>
         </div>
-        
         
         <!-- tree -->
         <!--

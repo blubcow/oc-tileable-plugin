@@ -1,7 +1,9 @@
 <div 
     class="tileable tilelist-widget <?= $cssClasses ?>" 
     id="<?= $this->getId() ?>" 
-    data-control="tilelistwidget">
+    data-control="tilelistwidget"
+    <?php if ($sortable): ?>data-is-sortable="true"<?php endif ?>
+    data-sort-handler="<?= $this->getEventHandler('onSortRecords') ?>" >
     <?= $this->makePartial('list') ?>
 </div>
 <!-- TODO: do we need this???: data-request-data="_relation_field: '<?= $relationField ?>'" -->
