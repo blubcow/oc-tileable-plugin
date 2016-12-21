@@ -129,16 +129,30 @@ class TileRelation extends FormWidgetBase
      */
     public function getSaveValue($value)
     {
+        // TODO: check if we need a php relation update/saving anyway
+        // currently, the relationship is saved via ajax.
+        // also, "$this->listWidget->getVisibleRecords()" may not return the right records (need to add filter and sort ??)
+        return \Backend\Classes\FormField::NO_SAVE_DATA;
+        
+        /*
+        // if the value is not an array,
+        //
         if (is_string($value) && !strlen($value)) {
-            return null;
+            //return null;
+            return \Backend\Classes\FormField::NO_SAVE_DATA;
         }
 
         if (is_array($value) && !count($value)) {
-            return null;
+            //return null;
+            return \Backend\Classes\FormField::NO_SAVE_DATA;
         }
         
-        if (!$value) return null;
+        if (!$value){
+            //return null;
+            return \Backend\Classes\FormField::NO_SAVE_DATA;
+        }
         
+        // find all the other values and add them in	
         //
         $activeRelations = $this->formField->value;
         $visibleRelations = $this->listWidget->getVisibleRecords();
@@ -157,6 +171,7 @@ class TileRelation extends FormWidgetBase
         
         //
         return $newRelations;
+        */
     }
 
 

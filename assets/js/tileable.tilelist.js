@@ -152,7 +152,7 @@
     
     TileListWidget.prototype.initUploader = function()
     {
-        var $btn = this.$el.find('[data-control="upload"]').eq(0);
+        var $btn = this.$el.find('*[data-control="upload"]').eq(0);
             
         var postUrl = $btn.data('url');
         var handler = $btn.data('handler');

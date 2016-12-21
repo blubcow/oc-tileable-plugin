@@ -27,8 +27,8 @@
                 <input
                     type="checkbox"
                     id="<?= $this->getId('checkbox-' . $record->getKey()) ?>"
-                    name="<?= $checkboxName ?>[]"
-                    value="<?= $record->getKey() ?>"
+                    <?php /*<!--name="<?= $checkboxName ?>[]"
+                    value="<?= $record->getKey() ?>" -->*/ ?>
                     
                     data-request="<?= $this->getEventHandler('onRelationChanged') ?>"
                     data-request-before-update="$(this).trigger('unchange.oc.changeMonitor');"
