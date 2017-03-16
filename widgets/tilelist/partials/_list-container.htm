@@ -3,7 +3,7 @@
     id="<?= $this->getId() ?>" 
     data-control="tilelistwidget"
     <?php if ($sortable): ?>data-is-sortable="true"<?php endif ?>
-    data-sort-handler="<?= $this->getEventHandler('onSortRecords') ?>" >
+    data-sort-handler="<?= $this->getEventHandler('onSortRecord') ?>" >
     <?= $this->makePartial('list') ?>
 </div>
 <!-- TODO: do we need this???: data-request-data="_relation_field: '<?= $relationField ?>'" -->

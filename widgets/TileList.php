@@ -174,8 +174,6 @@ class TileList extends Lists
      */
     public function prepareVars()
     {
-        
-        
         if($this->getSortColumn() == $this->relationSort){
             $this->sortDirection = 'asc';
         }
@@ -244,6 +242,10 @@ class TileList extends Lists
             $this->vars['sortable'] = false; 
         }
         
+        //
+        if(!empty($this->searchTerm)){
+            $this->vars['sortable'] = false; 
+        }
         
         
         // header partial
@@ -284,6 +286,12 @@ class TileList extends Lists
             $searchWidget->bindEvent('search.submit', function(){
                 return $this->onSearchSubmit();
             });
+            
+            $this->setSearchOptions([
+                'mode' => $searchWidget->mode,
+                'scope' => $searchWidget->scope,
+            ]);			
+            
             $this->setSearchTerm($searchWidget->getActiveTerm());
         }
         
@@ -378,9 +386,6 @@ class TileList extends Lists
         //if ($column = post('sortColumn')){
         if ($column = post($this->getFieldName('sortColumn'))) {
             
-            /*
-             * Set the sorting column
-             */
             $sortOptions = ['column' => $this->getSortColumn(), 'direction' => $this->sortDirection];
 
             $this->sortColumn = $sortOptions['column'] = $column;
@@ -448,8 +453,79 @@ class TileList extends Lists
      * Sort Records
      */
     
+    public function onSortRecord()
+    {
+        $id = post('id');
+        $index = post('index');
+        $sort = $index + ($this->recordsPerPage * ($this->currentPageNumber - 1)) + 1;
+                
+        // get relation parent
+        $parent = $this->getRelationParent();
+        if(!$parent){
+            // TODO: whats best for creating new models?
+            // return null;
+            throw new ApplicationException("It seems, the model has not been created yet!\nCreate / Save the model first...");
+        }
+        $field = $this->getRelationField();
+        $type = $parent->getRelationType($field);
+        
+        //
+        if(in_array($type, ['hasMany']))
+        {
+            throw new ApplicationException('hasMany NOT YET IMPLEMENTED');
+        }else
+        if(in_array($type, ['belongsToMany', 'morphToMany', 'morphedByMany']))
+        {
+            // get all siblings
+            //$records = $parent->{$field};
+            $relation = $parent->{$field}();
+            $table = $relation->getTable();
+            
+            // get pivot table WITHOUT OUR RECORD
+            $records = $relation
+                    ->select('id', $this->getSortColumn(), $relation->getOtherKey().' as '.$relation->getOtherKey(), $relation->getForeignKey().' as '.$relation->getForeignKey())
+                    ->where($relation->getForeignKey(), $parent->id)
+                    ->where('id', '!=', $id)
+                    ->orderBy($this->getSortColumn(), 'asc')
+                    ->get();
+            
+            // update "Pivot" table, which is not a pivot
+            DB::table($table)
+                ->where($relation->getOtherKey(), $id)
+                ->where($relation->getForeignKey(), $parent->id)
+                ->update([$this->getSortColumn() => $sort]);
+            
+            // update others
+            $newSort = 1;
+            foreach($records as $key => $record){
+                // skip current
+                if($newSort == $sort){
+                    $newSort++;
+                }
+                // update "Pivot" table, which is not a pivot
+                DB::table($table)
+                    ->where($relation->getOtherKey(), $record->id)
+                    ->where($relation->getForeignKey(), $parent->id)
+                    ->update([$this->getSortColumn() => $newSort]);
+                
+                //
+                $newSort++;
+            }
+        }else
+        if(in_array($type, ['belongsTo', 'hasOne', 'morphOne']))
+        {
+            throw new ApplicationException('belongsTo NOT YET IMPLEMENTED');
+        }else
+        if(in_array($type, ['morphTo']))
+        {
+            throw new ApplicationException('morphTo NOT YET IMPLEMENTED');
+        }
+        
+        //
+        return $this->onRefreshBody();
+    }
     
-    
+    /*
     public function onSortRecords()
     {
         // array [recordID => orderIndex]
@@ -520,31 +596,12 @@ class TileList extends Lists
             }elseif (in_array($type, ['belongsToMany', 'morphToMany', 'morphedByMany'])){
                 //echo('belongsToMany');
                 
-                /*
-                $interimTable = $parent->{$field}()->getTable();
-                DB::query('')
-                $parent->id
-                $record->id
-                */
                 
-                /*
-                $relation = $parent->{$field}();
-                $relation->where()->rawUpdate([
-                    getForeignKey() = ''
-                    getOtherKey()
-                ]);
-                */
                 //print_r($relation = $parent->{$field}->toArray());
                 
                 $relation = $parent->{$field}();
                 //echo $relation->getOtherKey().' - '.$relation->getForeignKey()."\n";
-                /*
-                $query = DB::table($relation->getTable())
-                    ->where($relation->getOtherKey(), $record->id)
-                    ->where($relation->getForeignKey(), $parent->id)
-                    ->get();
-                print_r($query);
-                */
+                
                 //if(!$query){
                     //$relation->updateExistingPivot($relation->getForeignKey(), [$this->getSortColumn() => 11234]);
                     //$relation->attach($record);
@@ -552,11 +609,11 @@ class TileList extends Lists
                 
                 
                 
-                /*
-                if(!$parent->{$field}->find($record->id)){
-                    $relation->attach($record);
-                }
-                */
+                
+                //if(!$parent->{$field}->find($record->id)){
+                    //$relation->attach($record);
+                //}
+                
                 
                 
                 
@@ -566,8 +623,8 @@ class TileList extends Lists
                     ->where($relation->getForeignKey(), $parent->id)
                     ->update([$this->getSortColumn() => $index]);
                 
-                echo($relation->getOtherKey().' '.$record->id.' | '.$relation->getForeignKey().' '.$parent->id.' | '.$this->getSortColumn().' '.$index."<br>\n");
-                print_r($updateQuery);
+                //echo($relation->getOtherKey().' '.$record->id.' | '.$relation->getForeignKey().' '.$parent->id.' | '.$this->getSortColumn().' '.$index."<br>\n");
+                //print_r($updateQuery);
                 
             }
             elseif (in_array($type, ['belongsTo', 'hasOne', 'morphOne'])){
@@ -578,63 +635,12 @@ class TileList extends Lists
             }
             
             
-            //$this->getSortColumn()
-            
-            //$index
-            
-            //print_r($parent->{$field}()->toArray());
-            
-            
-            /*
-            // TODO: check if this is correct?
-            // TODO: also, can we make it neater?
-            if (in_array($type, ['hasMany'])){
-                
-                // TODO: this is turned off, because hasMany is not supported (look for the error break)
-                $relation = $parent->{$field}();
-                
-                if($value == 'true'){
-                    $relation->save( $record );
-                }else{
-                    $parent->{$field} = $parent->{$field}->except($recordId);
-                    $parent->save();
-                }
-                
-                $parent->load($field);
-                
-            }
-            elseif (in_array($type, ['belongsToMany', 'morphToMany', 'morphedByMany'])){
-                $relation = $parent->{$field}();
-                    
-                if($value == 'true'){
-                    $relation->attach($recordId);
-                }else{
-                    $relation->detach($recordId);
-                }
-                
-                $parent->load($field);
-            }
-            elseif (in_array($type, ['belongsTo', 'hasOne', 'morphOne'])){
-                $relation = $parent->{$field}();
-                    
-                if($value == 'true'){
-                    $relation->associate($recordId);
-                }else{
-                    $relation->dissociate();
-                }
-                
-                $parent->load($field);
-            }
-            elseif (in_array($type, ['morphTo'])){
-                throw new ApplicationException('The relationship morphTo is not supported for list columns.');
-            }
-            */
             
         }
         
-        //return $this->onRefreshBody();
+        return $this->onRefreshBody();
     }
-    
+    */
     
     
     
@@ -982,19 +988,25 @@ class TileList extends Lists
             */
         }
         
+        
+        
+        
+        
+        
+        
+        
+        
         //
         // IS IN RELATION SORTING MODE
         // filter to related records
         //
+        // TODO: check if we need this
+        /*
         if($this->getSortColumn() == $this->relationSort)
         {
             // display only records from relation
             $activeIds = $this->getRelationRecordIds();
             $query = $query->whereIn($this->model->getTable().'.id', $activeIds);
-            
-            //echo($query->toSql());
-            //print_r($query->get()->count());
-            //var_dump($query->get()->toArray());
             
             // pagination
             $records = ($this->showPagination)
@@ -1006,8 +1018,24 @@ class TileList extends Lists
                 ? $query->paginate($this->recordsPerPage, $this->currentPageNumber)
                 : $query->get();
         }
+        */
         
-        //echo($query->toSql());
+        // if we are searching and sorting in relation mode
+        if(empty($this->searchTerm) && ($this->getSortColumn() == $this->relationSort)){
+            // display only records from relation
+            $activeIds = $this->getRelationRecordIds();
+            $query = $query->whereIn($this->model->getTable().'.id', $activeIds);
+        }
+        
+        // pagination
+        $records = ($this->showPagination)
+            ? $query->paginate($this->recordsPerPage, $this->currentPageNumber)
+            : $query->get();
+            
+        
+        
+        
+        
         
         //print_r(count($records->items()));
         //exit();
@@ -1187,9 +1215,11 @@ class TileList extends Lists
      * 
      * 
      * TODO: I don't like that much code lying around...
-     * That's the only line changed:
+     * That's the only this changed:
      * 
-     * DbDongle::raw("group_concat(" . $sqlSelect . " separator ',')")
+     * ###  DbDongle::raw("group_concat(" . $sqlSelect . " separator ',')")
+     * 
+     * ###  SORTING
      */
     public function prepareModel()
     {
@@ -1291,7 +1321,6 @@ class TileList extends Lists
                     }
                 }
             }
-
         });
 
         /*
@@ -1352,12 +1381,10 @@ class TileList extends Lists
         
         
         /*
-         * Apply sorting
+         * Apply sorting ON RELATION
          */
         if($this->getSortColumn() == $this->relationSort)
         {
-            
-            
             if ($sortColumn = $this->getSortColumn()) {
                 //
                 $parent = $this->getRelationParent();
@@ -1375,15 +1402,19 @@ class TileList extends Lists
                 }elseif (in_array($type, ['belongsToMany', 'morphToMany', 'morphedByMany'])){
                     
                     $relation = $parent->{$field}();
+                    $modelTable = $this->model->getTable();
+                    //$query->leftJoin($relation->getTable(), $this->model->getTable().'.id', '=', $relation->getOtherKey());
                     
                     
-                    //$query->leftJoin($relation->getTable(), function ($join)use($relation,$parent) {
-                    //    $join->on('id', '=', $relation->getOtherKey())
-                     //        ->where($relation->getForeignKey(), '=', $parent->id);
-                    //});
+                    $query->leftJoin($relation->getTable(), function($join) use($modelTable, $relation, $parent) {
+                        $join->on($relation->getOtherKey(), '=', $modelTable.'.id');
+                        $join->where($relation->getForeignKey(), '=', $parent->id);
+                    });
                     
-                    $query->leftJoin($relation->getTable(), $this->model->getTable().'.id', '=', $relation->getOtherKey())
-                        ->where($relation->getForeignKey(), '=', $parent->id);
+                    
+                    
+                    // if we want to filter too:
+                    //->where($relation->getForeignKey(), '=', $parent->id);
                 }
                 elseif (in_array($type, ['belongsTo', 'hasOne', 'morphOne'])){
                     echo('belongsTo');
@@ -1394,7 +1425,17 @@ class TileList extends Lists
                 
                 
                 
+                // select sort column
                 array_push($selects, $relation->getTable().'.'.$sortColumn);
+                
+                // make default sorting much higher
+                //array_push($selects, DB::raw('COALESCE('.$relation->getTable().'.'.$sortColumn.',999999) as '.$sortColumn));
+                
+                
+                
+                
+                
+                
                 
                 
                 $query->orderBy($relation->getTable().'.'.$sortColumn, $this->sortDirection);

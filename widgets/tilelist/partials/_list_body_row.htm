@@ -51,21 +51,26 @@
         <div class="right-column" data-click-overlay>
             <!-- sort button -->
             <?php if ($sortable): ?>
-                <a href="javascript:;" data-sort class="sort-button btn btn-xs btn-primary">
-                    <span class="icon icon-arrows"></i>
-                </a>
+                <div class="btn-group float">
+                    <a href="javascript:;" data-sortinput class="sortinput-button btn btn-xs btn-primary">
+                        manual
+                    </a>
+                    <a href="javascript:;" data-sort class="sort-button btn btn-xs btn-primary">
+                        <span class="icon icon-arrows"></i>
+                    </a>
+                </div>
             <?php endif ?>
             
             <!-- edit link -->
             <?php if ($this->getRecordUrl($record) && $isRelation): ?>
-                <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary"><?= e(trans('sewa.tileable::lang.list.edit')) ?> <span class="icon icon-edit"></span></a>
+                <a href="<?= $this->getRecordUrl($record) ?>" class="edit-button btn btn-xs btn-primary float"><?= e(trans('sewa.tileable::lang.list.edit')) ?> <span class="icon icon-edit"></span></a>
             <?php endif ?>
             
             <!-- edit link -->
             <?php if ($showDelete): ?>
                 <a href="javascript:;"
                     data-delete-record="<?= $record->id ?>"
-                    class="delete-button btn btn-xs btn-danger"
+                    class="delete-button btn btn-xs btn-danger float"
                     data-request-handler="<?= $this->getEventHandler('onDeleteRecord') ?>">
                     
                     <?= e(trans('sewa.tileable::lang.list.delete')) ?> <span class="icon icon-remove"></span>

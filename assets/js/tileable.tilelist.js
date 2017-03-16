@@ -12,6 +12,7 @@
 
         this.options = options || {};
         this.dropzone = null;
+        this.sortable = null;
 
         this.init();
         this.initUploader();
@@ -32,7 +33,7 @@
         */
         var t = this;
         
-        $(window).bind('ajaxUpdateComplete', function(context, data, textStatus, jqXHR){
+        $(window).bind('ajaxUpdateComplete', function(e, context, data, textStatus, jqXHR){
             t.update();
         });
         
@@ -85,6 +86,24 @@
             }
         });
         
+        /**
+         * MANUAL SORT 
+         */
+        this.$el.on('click', '*[data-sortinput]', function(e)
+        {
+            var $item = $(e.target).parents('.item').eq(0);
+            var id = $item.attr('id');
+            
+            //
+            var sort = window.prompt('Enter a sort position', $item.data('custom-sort'));
+            sort = parseInt(sort);
+            if(sort<=0){
+                alert('this number is not valid');
+            }
+            
+            //
+            $.proxy(t.onSortRecord(id, (sort-1)), t);
+        });
         
         /**
          * DELETE record completely 
@@ -192,14 +211,16 @@
     
     
     
-    
+    /*
     //
     // update
     TileListWidget.prototype.updateBody = function()
     {
+        console.log('updateBody');
+        
         this.bindSortable();
     }
-    
+    */
     
     
     
@@ -209,12 +230,19 @@
 
     TileListWidget.prototype.bindSortable = function() {
         
+        console.log('bindSortable');
         
         var _self = this;
-        Sortable.create(this.$el.find('.tileable-list').get( 0 ), {
+        this.sortable = Sortable.create(this.$el.find('.tileable-list').get(0), {
             onUpdate: function (evt/**Event*/){
                  //var item = evt.item; // the current dragged HTMLElement
-                 _self.onSortRecords(_self);
+                 //_self.onSortRecords(_self);
+                 
+                 var item = evt.item;
+                 var id = $(item).attr('id');
+                 var index = $(item).index();			     
+                 
+                 $.proxy(_self.onSortRecord(id, index), _self);
             }
         });
         
@@ -246,15 +274,32 @@
         })
         */
     }
-
+    
+    TileListWidget.prototype.onSortRecord = function(id, index)
+    {
+        var _ = this;
+        //
+        if(this.options.sortHandler)
+        {
+            this.$el.request(this.options.sortHandler, {
+                data: {
+                    'id': id,
+                    'index': index 
+                },
+                complete: function(){
+                    _.update();
+                }
+            });
+        }
+    }
+    
+    /*
     TileListWidget.prototype.onSortRecords = function(_s) {
         var _self = _s;
         //console.log(_self.options);
         if (_self.options.sortHandler) {
 
-            /*
-             * Build an object of ID:ORDER
-             */
+            //Build an object of ID:ORDER
             var orderData = {}
             
             var index = _self.$el.first('.item').attr('id');
@@ -263,42 +308,41 @@
                     var id = $(this).attr('id')
                     orderData[id] = index + 1
                 });
-            
-            
-            //console.log(_self.$el.find('.item'));
-            
-            /*
-            _self.$el.on('ajaxUpdate', function() {
-                console.log('Updated!');
-            });
-            */
-            
+                        
             
             _self.$el.request(this.options.sortHandler, {
                 data: { sortOrder: orderData },
                 complete: function(){
-                    _self.updateBody();
+                    _self.update();
                 }
             })
         }
     }
-    
-    
-    
+    */
     
     //
     //
     //
-    
     
     TileListWidget.prototype.update = function()
     {
+        
+        console.log('UPDATE');
+        
+        // remove sortable
+        if(this.sortable){
+            this.sortable.destroy();
+            this.sortable = null;
+        }
+        if (this.options.isSortable) {
+            this.bindSortable()
+        }
+        
         // remove uploader
         if (this.dropzone){
             this.dropzone.destroy();
             this.dropzone = null;
         }
-        
         this.initUploader();
     };
     
@@ -375,10 +419,3 @@
     });
     
 }(window.jQuery);
-
-function updateTileListWidget(id)
-{
-    console.log(id);
-    console.log($('#'+id));
-    $('#'+id).tileListWidget('updateBody');
-}

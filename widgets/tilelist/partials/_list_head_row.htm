@@ -106,6 +106,7 @@
             
             data-request="<?= $this->getEventHandler('onSort') ?>"
             data-stripe-load-indicator
+            data-request-before-update="$(this).trigger('unchange.oc.changeMonitor');"
             >
             
             <?php foreach ($allColumns as $key => $column): ?>
@@ -130,6 +131,7 @@
             
             data-request="<?= $this->getEventHandler('onSortDirection') ?>"
             data-stripe-load-indicator
+            data-request-before-update="$(this).trigger('unchange.oc.changeMonitor');"
             data-request-data="page: <?= $pageCurrent ?>">
             <?php if($sortDirection == 'asc'): ?>
                 <span class="icon icon-sort-alpha-asc"></span>
