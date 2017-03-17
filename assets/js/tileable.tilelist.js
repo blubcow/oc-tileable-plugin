@@ -97,12 +97,12 @@
             //
             var sort = window.prompt('Enter a sort position', $item.data('custom-sort'));
             sort = parseInt(sort);
-            if(sort<=0){
-                alert('this number is not valid');
+            if((sort>=0) && (isNaN(sort)==false)){
+                //
+                $.proxy(t.onSortRecord(id, (sort-1)), t);
+            }else{
+                //alert('this number is not valid');
             }
-            
-            //
-            $.proxy(t.onSortRecord(id, (sort-1)), t);
         });
         
         /**
