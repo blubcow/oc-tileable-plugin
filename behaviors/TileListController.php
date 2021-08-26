@@ -80,7 +80,8 @@ class TileListController extends ListController
             'headerPartial',
             'relation',
             'checkboxName',
-            'createRecordUrl'
+            'createRecordUrl',
+            'sortableColumn'
         ];
 
         foreach ($configFieldsToTransfer as $field) {

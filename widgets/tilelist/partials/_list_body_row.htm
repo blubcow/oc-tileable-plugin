@@ -52,9 +52,12 @@
             <!-- sort button -->
             <?php if ($sortable): ?>
                 <div class="btn-group float">
-                    <a href="javascript:;" data-sortinput class="sortinput-button btn btn-xs btn-primary">
-                        manual
-                    </a>
+                    <?php if ($isRelation): ?>
+                        <a href="javascript:;" data-sortinput class="sortinput-button btn btn-xs btn-primary">
+                            manual
+                        </a>
+                    <?php endif ?>
+                    
                     <a href="javascript:;" data-sort class="sort-button btn btn-xs btn-primary">
                         <span class="icon icon-arrows"></i>
                     </a>

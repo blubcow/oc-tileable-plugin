@@ -61,10 +61,11 @@ class TileList extends Lists
     /**
      * @var array Fill new models with values from uploaded attachment
      */
-    public $uploadFill = [
+    /*public $uploadFill = [
         'name' => 'file_name',
         'slug' => 'file_name'
-    ];
+    ];*/
+    public $uploadFill = [];
     
     /**
      * @var bool Show search field in header
@@ -104,6 +105,8 @@ class TileList extends Lists
      * 
      */
     public $relationSort = null;
+
+    public $sortableColumn = null;
     
     //
     // Object properties
@@ -136,7 +139,8 @@ class TileList extends Lists
             'relation',
             'checkboxName',
             'createRecordUrl',
-            'relationSort'
+            'relationSort',
+            'sortableColumn'
         ]);
         
         //
@@ -234,12 +238,17 @@ class TileList extends Lists
         $this->vars['checkboxName'] = $this->checkboxName;
         
         // prepare sortable
-        if($this->getSortColumn() == $this->relationSort){
-            //$this->vars['records'] = $this->getRelationRecords();
-            //$this->vars['sortDirection'] = 'asc';
-            $this->vars['sortable'] = true; 
+        $this->vars['sortable'] = false;
+        if($this->relation){
+            if($this->getSortColumn() == $this->relationSort){
+                //$this->vars['records'] = $this->getRelationRecords();
+                //$this->vars['sortDirection'] = 'asc';
+                $this->vars['sortable'] = true; 
+            }
         }else{
-            $this->vars['sortable'] = false; 
+            if($this->getSortColumn() == $this->sortableColumn){
+                $this->vars['sortable'] = true; 
+            }
         }
         
         //
@@ -458,7 +467,57 @@ class TileList extends Lists
         $id = post('id');
         $index = post('index');
         $sort = $index + ($this->recordsPerPage * ($this->currentPageNumber - 1)) + 1;
+        
+        if($this->relation){
+            $this->onSortRelationRecord($id, $sort);
+        }else{
+
+            if($this->sortDirection == 'asc'){
+
+            }else{
+                $record = $this->model->find($id);
+                $currentSort = $record->getAttribute($this->sortableColumn);
+
+                // calculate the new sorting position
+                $lastRecord = $this->model->orderBy($this->sortableColumn, 'DESC')->first();
+                $lastSort = $lastRecord->getAttribute($this->sortableColumn);
+                //->get($this->sortableColumn)
                 
+                $newSort = (($lastSort - $sort) + 1);
+
+                /*
+                print_r($lastSort);
+                echo("\n");
+                print_r($sort);
+                echo("\n");
+                print_r($currentSort." > ".$newSort);
+                */
+
+                //$targetRecord = $this->model->where($this->sortableColumn, $newSort)->first();
+
+                // move records
+                if($newSort < $currentSort){
+                    $this->model->where($this->sortableColumn, '<', $currentSort)
+                                ->where($this->sortableColumn, '>=', $newSort)
+                                ->increment($this->sortableColumn);
+                    $record->update([$this->sortableColumn => $newSort]);
+
+                }elseif($newSort > $currentSort){
+                    $this->model->where($this->sortableColumn, '<=', $newSort)
+                                ->where($this->sortableColumn, '>', $currentSort)
+                                ->decrement($this->sortableColumn);
+                    $record->update([$this->sortableColumn => $newSort]);
+                }
+            }
+
+        }
+        
+        
+        //
+        return $this->onRefreshBody();
+    }
+
+    public function onSortRelationRecord($id, $sort){
         // get relation parent
         $parent = $this->getRelationParent();
         if(!$parent){
@@ -520,9 +579,6 @@ class TileList extends Lists
         {
             throw new ApplicationException('morphTo NOT YET IMPLEMENTED');
         }
-        
-        //
-        return $this->onRefreshBody();
     }
     
     /*
@@ -1181,6 +1237,8 @@ class TileList extends Lists
         }else
         if(post($this->getFieldName('page'))){
             $this->currentPageNumber = post($this->getFieldName('page'));
+        }else{
+            $this->currentPageNumber = 1;
         }
     }
     
